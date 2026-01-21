@@ -10,41 +10,40 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
-            git branch: 'main',
-                url: 'https://github.com/akshaydivekar0624/eks-cluster-deployment.git'
-            }
-        }
-    
-        stage ("terraform init") {
             steps {
-                sh ("terraform init -reconfigure") 
-            }
-        }
-        
-        stage ("plan") {
-            steps {
-                sh ('terraform plan') 
+                git branch: 'main',
+                    url: 'https://github.com/akshaydivekar0624/eks-cluster-deployment.git'
             }
         }
 
-        stage (" Action") {
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init -reconfigure'
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                sh 'terraform plan'
+            }
+        }
+
+        stage('Terraform Action') {
             steps {
                 script {
-                    switch (params.ACTION) {
-                        case 'apply':
-                            echo 'Executing Apply...'
-                            sh "terraform apply --auto-approve"
-                            break
-                        case 'destroy':
-                            echo 'Executing Destroy...'
-                            sh "terraform destroy --auto-approve"
-                            break
-                        default:
-                            error 'Unknown action'
+                    if (params.ACTION == 'apply') {
+                        echo 'Executing Apply...'
+                        sh 'terraform apply --auto-approve'
+                    } else if (params.ACTION == 'destroy') {
+                        echo 'Executing Destroy...'
+                        sh 'terraform destroy --auto-approve'
+                    } else {
+                        error 'Unknown action'
                     }
                 }
             }
         }
     }
-
+}
