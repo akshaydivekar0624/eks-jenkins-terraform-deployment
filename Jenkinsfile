@@ -11,9 +11,10 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps {
-                git 'https://github.com/akshaydivekar0624/eks-cluster-deployment.git'
-            }
+    git branch: 'main',
+        url: 'https://github.com/akshaydivekar0624/eks-cluster-deployment.git'
+}
+
         }
     
         stage ("terraform init") {
